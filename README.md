@@ -1,14 +1,15 @@
-# Containerized Notes Manager
+# 🐳 Containerized Notes Manager
 
 A lightweight, containerized To-Do List application built with **Python Flask**, **PostgreSQL**, and **Nginx**. This project demonstrates core containerization concepts including network isolation, data persistence, and orchestration.
 
-##  Architecture
+## 🏗 Architecture
 The application consists of three Docker containers managed via Docker Compose:
 
 1.  **Reverse Proxy (Nginx):** Acts as the gateway, exposing the application on port `80`.
 2.  **Backend (Python Flask):** Handles application logic and CRUD operations. Isolated within an internal network (no direct external access).
 3.  **Database (PostgreSQL):** Persists data using Docker volumes. Includes a healthcheck mechanism to ensure availability before the backend starts.
 
+```mermaid
 graph TD
     User((User)) -->|Browser: Port 80| Nginx[Nginx Reverse Proxy]
     
@@ -20,7 +21,7 @@ graph TD
     subgraph "Storage"
         DB --- Vol[(Docker Volume: db_data)]
     end
-
+```
 ##  Key Features implemented
 * **Network Isolation:** Custom bridge network (`projekt-net`) ensures the backend is only accessible via the Nginx proxy.
 * **Data Persistence:** Docker Volumes preserve database records even after containers are removed.
@@ -67,7 +68,7 @@ Referencing lecture materials (Slide 281), here are the commands used to manage 
 | **Database Access** | `docker exec -it projekt_wik-db-1 psql -U uzytkownik -d moja_baza` |
 | **Stop & Cleanup** | `docker compose down -v` |
 
-## ⚙️ Technical Details
+## Technical Details
 
 ### Healthcheck Mechanism
 The database container uses a `pg_isready` healthcheck. The backend service includes a `depends_on` condition:
