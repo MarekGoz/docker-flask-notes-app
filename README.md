@@ -9,6 +9,18 @@ The application consists of three Docker containers managed via Docker Compose:
 2.  **Backend (Python Flask):** Handles application logic and CRUD operations. Isolated within an internal network (no direct external access).
 3.  **Database (PostgreSQL):** Persists data using Docker volumes. Includes a healthcheck mechanism to ensure availability before the backend starts.
 
+graph TD
+    User((User)) -->|Browser: Port 80| Nginx[Nginx Reverse Proxy]
+    
+    subgraph "Docker Internal Network (projekt-net)"
+        Nginx -->|Forwarding| Flask[Flask Backend]
+        Flask -->|SQL Connection| DB[(PostgreSQL Database)]
+    end
+    
+    subgraph "Storage"
+        DB --- Vol[(Docker Volume: db_data)]
+    end
+
 ##  Key Features implemented
 * **Network Isolation:** Custom bridge network (`projekt-net`) ensures the backend is only accessible via the Nginx proxy.
 * **Data Persistence:** Docker Volumes preserve database records even after containers are removed.
@@ -41,3 +53,26 @@ The application consists of three Docker containers managed via Docker Compose:
 To stop containers and remove networks:
 ```bash
 docker compose down
+```
+## Useful Docker Commands (Cheat Sheet)
+
+Referencing lecture materials (Slide 281), here are the commands used to manage this project:
+
+| Task | Docker Command |
+| :--- | :--- |
+| **Build & Run** | `docker compose up -d --build` |
+| **List Containers** | `docker compose ps` |
+| **Check Logs** | `docker compose logs -f` |
+| **Inspect Network** | `docker network inspect projekt_wik_projekt-net` |
+| **Database Access** | `docker exec -it projekt_wik-db-1 psql -U uzytkownik -d moja_baza` |
+| **Stop & Cleanup** | `docker compose down -v` |
+
+## ⚙️ Technical Details
+
+### Healthcheck Mechanism
+The database container uses a `pg_isready` healthcheck. The backend service includes a `depends_on` condition:
+- It waits until the database is **Healthy** before starting.
+- This prevents "Connection Refused" errors during the initial boot-up phase.
+
+### Data Persistence
+We use a **Named Volume** (`db_data`). Even if the containers are destroyed and recreated, the database records remain safe on the host machine in the Docker-managed storage area.
