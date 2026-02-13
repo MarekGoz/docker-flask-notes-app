@@ -1,28 +1,43 @@
-# Projekt: Wirtualizacja i Konteneryzacja (WiK)
-Aplikacja webowa z bazą danych i Reverse Proxy.
+# Containerized Notes Manager
 
-## Opis architektury
-Projekt składa się z trzech kontenerów zarządzanych przez Docker Compose:
-1. **Frontend/Proxy (Nginx):** Działa jako Reverse Proxy, udostępniając aplikację na porcie 80.
-2. **Backend (Python/Flask):** Logika aplikacji. Kontener jest odizolowany w sieci wewnętrznej (brak bezpośredniego dostępu z zewnątrz).
-3. **Baza danych (PostgreSQL):** Przechowuje notatki. Posiada trwały wolumin (persistence) oraz healthcheck.
+A lightweight, containerized To-Do List application built with **Python Flask**, **PostgreSQL**, and **Nginx**. This project demonstrates core containerization concepts including network isolation, data persistence, and orchestration.
 
-## Jak uruchomić projekt?
-Wymagane: Docker oraz Docker Compose.
+##  Architecture
+The application consists of three Docker containers managed via Docker Compose:
 
-1. Otwórz terminal w folderze projektu.
-2. Uruchom polecenie:
-   docker compose up -d --build
+1.  **Reverse Proxy (Nginx):** Acts as the gateway, exposing the application on port `80`.
+2.  **Backend (Python Flask):** Handles application logic and CRUD operations. Isolated within an internal network (no direct external access).
+3.  **Database (PostgreSQL):** Persists data using Docker volumes. Includes a healthcheck mechanism to ensure availability before the backend starts.
 
-3. Aplikacja będzie dostępna pod adresem:
-   http://localhost
+##  Key Features implemented
+* **Network Isolation:** Custom bridge network (`projekt-net`) ensures the backend is only accessible via the Nginx proxy.
+* **Data Persistence:** Docker Volumes preserve database records even after containers are removed.
+* **Healthchecks:** The backend service waits for the database to be fully ready (`pg_isready`) using `depends_on`.
+* **Security:** Environment variables are loaded from a `.env` file (not included in the repo for security).
+* **CRUD Operations:** Users can create, read, and delete notes via a web interface.
 
-## Funkcjonalności
-- **Izolacja sieciowa:** Backend jest ukryty w prywatnej sieci `projekt-net`. Bezpośrednie wejście na port aplikacji (5000) jest zablokowane.
-- **Healthcheck:** Backend oczekuje na pełne uruchomienie bazy danych przed startem (`depends_on: service_healthy`).
-- **Trwałość danych:** Dane notatek są zapisywane w woluminie Dockera – nie znikają po restarcie kontenerów.
-- **Interakcja :** Możliwość dodawania, wyświetlania i usuwania notatek (operacje INSERT, SELECT, DELETE).
+##  Prerequisites
+* Docker & Docker Compose
 
-## Zatrzymywanie
-Aby zatrzymać projekt i posprzątać kontenery:
+##  How to Run
+
+1.  **Clone the repository** (or download source code).
+2.  **Configure Environment Variables:**
+    Create a `.env` file in the root directory based on the example:
+    ```bash
+    cp .env.example .env
+    ```
+    *(Fill in your own DB_USER and DB_PASSWORD inside .env)*
+
+3.  **Launch the Application:**
+    ```bash
+    docker compose up -d --build
+    ```
+
+4.  **Access the App:**
+    Open your browser and navigate to: [http://localhost](http://localhost)
+
+##  Stopping the App
+To stop containers and remove networks:
+```bash
 docker compose down
