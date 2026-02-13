@@ -1,8 +1,8 @@
-# 🐳 Containerized Notes Manager
+# Containerized Notes Manager
 
 A lightweight, containerized To-Do List application built with **Python Flask**, **PostgreSQL**, and **Nginx**. This project demonstrates core containerization concepts including network isolation, data persistence, and orchestration.
 
-## 🏗 Architecture
+## Architecture
 The application consists of three Docker containers managed via Docker Compose:
 
 1.  **Reverse Proxy (Nginx):** Acts as the gateway, exposing the application on port `80`.
