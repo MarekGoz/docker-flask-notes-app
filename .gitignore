@@ -1,0 +1,14 @@
+# --- Pliki z hasłami i konfiguracją lokalną ---
+.env
+
+# --- Pliki tymczasowe Pythona ---
+__pycache__/
+*.pyc
+
+# --- Dane bazy danych ---
+db_data/
+.postgres_data/
+
+# --- Pliki systemowe ---
+.DS_Store
+Thumbs.db
